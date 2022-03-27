@@ -130,8 +130,8 @@ fun longestCommonSubstring(first: String, second: String): String {
  */
 
 /**
- * Ресурсоёмкость: O(N);
- * Трудоёмкость: O(Nlog(log(N)))
+ * Трудоёмкость T = O(Nlog(log(N)))
+ * Ресурсоёмкость R = O(N);
  */
 fun calcPrimesNumber(limit: Int): Int {
     if (limit <= 1) return 0
