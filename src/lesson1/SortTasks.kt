@@ -130,28 +130,28 @@ fun sortAddresses(inputName: String, outputName: String) {
  */
 /**
  * Ресурсоёмкость R = O(N)
- * Трудоёмкость T = O(N * logN)
- */
+ * Трудоёмкость T = O(N)
+ **/
 fun sortTemperatures(inputName: String, outputName: String) {
-    val map = mutableMapOf<Double, Int>()
+    val map = mutableMapOf<Int, Int>()
+    val listResult = mutableListOf<Double>()
+    val temp = mutableListOf<Int>()
     File(inputName).bufferedReader().useLines { inpLines ->
         inpLines.forEach { line ->
-            val temp = line.toDouble()
-            if (temp in map.keys) {
-                val count = map[temp]!! + 1
-                map[temp] = count
-            } else map[temp] = 1
+            temp.add((line.toDouble() * 10).toInt())
+        }
+        for (i in -2730..5000) {
+            map[i] = 0
+        }
+        for (i in temp) {
+            map[i] = map[i]!!.plus(1)
         }
     }
     File(outputName).bufferedWriter().use {
-        while (map.isNotEmpty()) {
-            val min = map.keys.minOrNull()
-            for (el in 1..map[min]!!) {
-                it.write(min.toString())
-                it.newLine()
-            }
-            map.remove(min)
+        for ((num, numOfRepeats) in map) {
+            if (numOfRepeats != 0) repeat(numOfRepeats) { listResult.add((num.toDouble() / 10)) }
         }
+        it.write(listResult.joinToString("\n"))
     }
 }
 
