@@ -70,8 +70,51 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
      *
      * Сложная
      */
-    override fun iterator(): MutableIterator<String> {
-        TODO()
-    }
+    override fun iterator(): MutableIterator<String> = TrieIterator()
 
+    inner class TrieIterator internal constructor() : MutableIterator<String> {
+        private val stack = ArrayDeque<String>()
+        private var nextStr = ""
+
+        /**
+         * Ресурсоёмкость: T = O(N)
+         * Трудоёмксость: R = O(log(N))?
+         */
+        private fun fillStack(str: String, map: Map<Char, Node>) {
+            for ((k, v) in map) {
+                if (k != 0.toChar())
+                    fillStack(str + k, v.children) else stack.push(str)
+            }
+        }
+
+        init {
+            fillStack("", root.children)
+        }
+
+        /**
+         * Трудоёмкость: T = O(1)
+         * Ресурсоёмкость: R = O(1)
+         */
+        override fun hasNext(): Boolean = stack.isNotEmpty()
+
+        /**
+         * Трудоёмкость: T = O(1)
+         * Ресурсоёмкость: R = O(1)
+         */
+        override fun next(): String {
+            if (!hasNext()) throw NoSuchElementException()
+            nextStr = stack.pop()
+            return nextStr
+        }
+
+        /**
+         * Трудоёмкость: T = O(log(N))
+         * Ресурсоёмкость: R = O(1)
+         */
+        override fun remove() {
+            if (nextStr == "") throw IllegalStateException()
+            remove(nextStr)
+            nextStr = ""
+        }
+    }
 }

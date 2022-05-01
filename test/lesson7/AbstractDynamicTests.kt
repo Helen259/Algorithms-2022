@@ -35,6 +35,8 @@ abstract class AbstractDynamicTests {
                 """.trimIndent()
             ).length, "Answer must have length of $expectedLength2"
         )
+        assertEquals("adh", longestCommonSubSequence("abcdgh", "aedfhr"))
+        assertEquals(3, longestCommonSubSequence("abcdgh", "aedfhr").length)
     }
 
     fun longestIncreasingSubSequence(longestIncreasingSubSequence: (List<Int>) -> List<Int>) {
@@ -54,6 +56,10 @@ abstract class AbstractDynamicTests {
                     45, 76, 15, 99, 100, 88, 84, 35, 88
                 )
             )
+        )
+        assertEquals(
+            listOf(5, 10, 12, 24),
+            longestIncreasingSubSequence(listOf(5, 10, 6, 12, 3, 24, 7, 8))
         )
     }
 

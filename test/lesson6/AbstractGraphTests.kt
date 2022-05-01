@@ -181,6 +181,23 @@ abstract class AbstractGraphTests {
         val tree3 = graph3.minimumSpanningTree()
         assertEquals(4, tree3.edges.size)
         assertEquals(4, tree3.findBridges().size)
+        val graphMy = GraphBuilder().apply {
+            val a = addVertex("A")
+            val b = addVertex("B")
+            val c = addVertex("C")
+            val d = addVertex("D")
+            val e = addVertex("E")
+            val f = addVertex("F")
+            addConnection(a, c)
+            addConnection(c, d)
+            addConnection(c, e)
+            addConnection(d, b)
+            addConnection(d, f)
+            addConnection(e, f)
+        }.build()
+        val tree4 = graphMy.minimumSpanningTree()
+        assertEquals(5, tree4.edges.size)
+        assertEquals(5, tree4.findBridges().size)
     }
 
     fun largestIndependentVertexSet(largestIndependentVertexSet: Graph.() -> Set<Graph.Vertex>) {
@@ -351,6 +368,28 @@ abstract class AbstractGraphTests {
         }.build()
         val longestPath3 = graph3.longestSimplePath()
         assertEquals(6, longestPath3.length)
+        val graphMy = GraphBuilder().apply {
+            val a = addVertex("A")
+            val b = addVertex("B")
+            val c = addVertex("C")
+            val d = addVertex("D")
+            val e = addVertex("E")
+            val f = addVertex("F")
+            val g = addVertex("G")
+            val h = addVertex("H")
+            addConnection(a, b)
+            addConnection(b, c)
+            addConnection(c, d)
+            addConnection(a, e)
+            addConnection(b, f)
+            addConnection(b, g)
+            addConnection(g, h)
+            addConnection(h, c)
+            addConnection(g, f)
+        }.build()
+        val longestPath4 = graphMy.longestSimplePath()
+        assertEquals(7, longestPath4.length)
+
     }
 
     fun baldaSearcher(baldaSearcher: (String, Set<String>) -> Set<String>) {

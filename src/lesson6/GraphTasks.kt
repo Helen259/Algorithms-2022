@@ -2,6 +2,9 @@
 
 package lesson6
 
+import lesson6.impl.GraphBuilder
+import java.util.*
+
 /**
  * Эйлеров цикл.
  * Средняя
@@ -59,9 +62,31 @@ fun Graph.findEulerLoop(): List<Graph.Edge> {
  * E    F    I
  * |
  * J ------------ K
+ *
+ * Трудоемкость T = O(V * E)
+ * Ресурсоемкость R = O(V)
  */
 fun Graph.minimumSpanningTree(): Graph {
-    TODO()
+    val answer = GraphBuilder()
+    val map = hashMapOf<Graph.Vertex, Int>()
+    for ((i, vertex) in vertices.withIndex()) {
+        map[answer.addVertex(vertex.name)] = i
+    }
+    for (edge in edges) {
+        val first = edge.begin
+        val second = edge.end
+        if (map[first] != map[second]) {
+            val f = map[first]!!
+            val s = map[second]!!
+            answer.addConnection(first, second, 0)
+            for (entry in map.entries.stream()) {
+                if (entry.value == f) {
+                    entry.setValue(s)
+                }
+            }
+        }
+    }
+    return answer.build()
 }
 
 /**
@@ -111,9 +136,29 @@ fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
  * J ------------ K
  *
  * Ответ: A, E, J, K, D, C, H, G, B, F, I
+ *
+ * Трудоёмкость T = O(V!)
+ * Ресурсоёмкость R = O(V!)
  */
 fun Graph.longestSimplePath(): Path {
-    TODO()
+    var max = -1
+    var path = Path()
+    val deque = ArrayDeque<Path>()
+    for (vertex in vertices)
+        deque.add(Path(vertex))
+    while (deque.isNotEmpty()) {
+        val current = deque.pollFirst()
+        if (current.length > max) {
+            max = current.length
+            path = current
+            if (max == vertices.size) break
+        }
+        for (neighbour in getNeighbors(current.vertices.last())) {
+            if (neighbour !in current)
+                deque.add(Path(current, this, neighbour))
+        }
+    }
+    return path
 }
 
 /**

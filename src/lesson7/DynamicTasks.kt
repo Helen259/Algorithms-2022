@@ -13,9 +13,32 @@ package lesson7
  * Если общей подпоследовательности нет, вернуть пустую строку.
  * Если есть несколько самых длинных общих подпоследовательностей, вернуть любую из них.
  * При сравнении подстрок, регистр символов *имеет* значение.
+ *
+ * Трудоемкость T = O(m*n)
+ * Ресурсоемкость R = O(m*n)
  */
 fun longestCommonSubSequence(first: String, second: String): String {
-    TODO()
+    val m = first.length
+    val n = second.length
+    val array = Array(m + 1) { IntArray(n + 1) }
+    for (i in m downTo 0)
+        for (j in n downTo 0) {
+            if (i == m || j == n) array[i][j] = 0
+            else if (first[i] == second[j])
+                array[i][j] = array[i + 1][j + 1] + 1
+            else array[i][j] = array[i][j + 1].coerceAtLeast(array[i + 1][j])
+        }
+    val answer = StringBuilder()
+    var i = 0
+    var j = 0
+    while (i < m && j < n) {
+        if (first[i] == second[j]) {
+            answer.append(first[i])
+            i++
+            j++
+        } else if (array[i + 1][j] >= array[i][j + 1]) i++ else j++
+    }
+    return answer.toString()
 }
 
 /**
@@ -29,9 +52,32 @@ fun longestCommonSubSequence(first: String, second: String): String {
  * Если самых длинных возрастающих подпоследовательностей несколько (как в примере),
  * то вернуть ту, в которой числа расположены раньше (приоритет имеют первые числа).
  * В примере ответами являются 2, 8, 9, 12 или 2, 5, 9, 12 -- выбираем первую из них.
+ *
+ * Трудоёмкость T = O(N*logN)
+ * Ресурсоёмкость R = O(N)
  */
 fun longestIncreasingSubSequence(list: List<Int>): List<Int> {
-    TODO()
+    val prev = IntArray(list.size)
+    val pos = IntArray(list.size + 1)
+    var length = 0
+    for (i in list.indices.reversed()) {
+        var l = 1
+        var r = length
+        while (l <= r) {
+            val m = (l + r) / 2
+            if (list[pos[m]] < list[i]) r = m - 1 else l = m + 1
+        }
+        prev[i] = pos[l - 1]
+        pos[l] = i
+        if (l > length) length = l
+    }
+    val answer = mutableListOf<Int>()
+    var p = pos[length]
+    for (i in length - 1 downTo 0) {
+        answer.add(list[p])
+        p = prev[p]
+    }
+    return answer
 }
 
 /**
