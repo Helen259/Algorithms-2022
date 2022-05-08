@@ -73,48 +73,72 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
     override fun iterator(): MutableIterator<String> = TrieIterator()
 
     inner class TrieIterator internal constructor() : MutableIterator<String> {
-        private val stack = ArrayDeque<String>()
+        private val stack = ArrayDeque<MutableIterator<Map.Entry<Char, Node>>>()
         private var nextStr = ""
-
-        /**
-         * Ресурсоёмкость: T = O(N)
-         * Трудоёмксость: R = O(log(N))?
-         */
-        private fun fillStack(str: String, map: Map<Char, Node>) {
-            for ((k, v) in map) {
-                if (k != 0.toChar())
-                    fillStack(str + k, v.children) else stack.push(str)
-            }
-        }
+        private val line = StringBuilder()
+        private var count = 0
 
         init {
-            fillStack("", root.children)
+            stack.push(root.children.entries.iterator())
         }
 
         /**
          * Трудоёмкость: T = O(1)
          * Ресурсоёмкость: R = O(1)
          */
-        override fun hasNext(): Boolean = stack.isNotEmpty()
+        override fun hasNext(): Boolean = size > count
 
         /**
-         * Трудоёмкость: T = O(1)
-         * Ресурсоёмкость: R = O(1)
+         * Трудоемксость: T = O(N)
+         * Ресурсоемкость: R = O(H)
          */
         override fun next(): String {
             if (!hasNext()) throw NoSuchElementException()
-            nextStr = stack.pop()
+            proceed()
             return nextStr
         }
 
         /**
-         * Трудоёмкость: T = O(log(N))
+         * Трудоемксость: T = O(N), трудоемкость внешнего while - O(N), а внутреннего - O(1)
+         * Ресурсоемкость: R = O(H), где H - длина самого длинного слова (размер стека)
+         */
+        private fun proceed() {
+            var iterator = stack.peek()
+            while (iterator != null) {
+                while (iterator.hasNext()) {
+                    val next = iterator.next() // следующий потомок
+                    val key = next.key
+                    val value = next.value
+                    if (key == 0.toChar()) { // текущий путь - является словом
+                        nextStr = line.toString()
+                        count++
+                        return
+                    }
+                    iterator = value.children.entries.iterator() // получаем потомков текущего элемента
+                    stack.push(iterator)
+                    line.append(key)
+                }
+                // перебрали всех потомков текущего узла - убираем со стека
+                stack.pop()
+                if (line.isNotEmpty()) {
+                    line.deleteCharAt(line.length - 1)
+                }
+                iterator = stack.peek()
+            }
+        }
+
+        /**
+         * Трудоёмкость: T = O(1)
          * Ресурсоёмкость: R = O(1)
          */
         override fun remove() {
             if (nextStr == "") throw IllegalStateException()
-            remove(nextStr)
-            nextStr = ""
+            if (stack.peek() != null) {
+                stack.peek().remove()
+                count--
+                size--
+                nextStr = ""
+            }
         }
     }
 }

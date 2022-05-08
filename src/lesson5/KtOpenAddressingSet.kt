@@ -1,6 +1,7 @@
 package lesson5
 
 import java.util.NoSuchElementException
+
 /**
  * Множество(таблица) с открытой адресацией на 2^bits элементов без возможности роста.
  */
@@ -144,7 +145,9 @@ class KtOpenAddressingSet<T : Any>(private val bits: Int) : AbstractMutableSet<T
                 storage[index - 1] = Removed
                 iterations--
                 size--
-            } else throw IllegalStateException()
+            } else {
+                throw IllegalStateException()
+            }
         }
     }
 }

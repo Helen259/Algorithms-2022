@@ -64,6 +64,10 @@ fun Graph.findEulerLoop(): List<Graph.Edge> {
  * J ------------ K
  *
  * Трудоемкость T = O(V * E)
+ * Трудоемкость первого цикла - E
+ * Трудоемкость внешнего цикла V, внутреннего цикла - E -> Итоговая трудоемкость V*E
+ * Получается трудоемкость всего алгоритма O(E+V*E)=O(V*E)
+ *
  * Ресурсоемкость R = O(V)
  */
 fun Graph.minimumSpanningTree(): Graph {
@@ -151,11 +155,14 @@ fun Graph.longestSimplePath(): Path {
         if (current.length > max) {
             max = current.length
             path = current
-            if (max == vertices.size) break
+            if (max == vertices.size) {
+                break
+            }
         }
         for (neighbour in getNeighbors(current.vertices.last())) {
-            if (neighbour !in current)
+            if (neighbour !in current) {
                 deque.add(Path(current, this, neighbour))
+            }
         }
     }
     return path
